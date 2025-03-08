@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { getMessages } from "../../actions/messages";
 import { Message, Category } from "../../types/messages";
 import { EmailItem } from "./email-item";
 import { Separator } from "@/components/ui/separator";
+import { Loader2 } from "lucide-react";
 type Props = {
   userId: string;
   selectedCategoryId: string;
@@ -21,10 +22,18 @@ export default function Inbox({
   setMessages,
 }: Props) {
   const [category, setCategory] = useState<Category | null>(categories.find((cat) => cat.id === selectedCategoryId) || null);
+  const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchMessages = async () => {
-      const data = await getMessages(userId, selectedCategoryId);
-      setMessages(data.messages);
+      try {
+        setLoading(true);
+        const data = await getMessages(userId, selectedCategoryId);
+        setMessages(data.messages);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchMessages();
   }, [userId, selectedCategoryId]);
@@ -47,18 +56,33 @@ export default function Inbox({
       </div>
       <Separator className="my-3" />
       <div className="border rounded-lg overflow-hidden">
+        <Suspense fallback={<Fallback loading={loading} />}>
         <div className="divide-y">
           {messages.length > 0 ? (
             messages.map((message) => (
               <EmailItem key={message.id} message={message} />
             ))
           ) : (
-            <div className="py-4 text-center text-muted-foreground">
-              No emails yet in this category
-            </div>
+            <Fallback loading={loading} />
           )}
         </div>
+        </Suspense>
       </div>
+    </div>
+  );
+}
+
+function Fallback(props: { loading: boolean }) {
+  if (props.loading) {
+    return (
+      <div className="py-4 flex items-center justify-center text-muted-foreground">
+        <Loader2 className="w-4 h-4 animate-spin" />
+      </div>
+    );
+  }
+  return (
+    <div className="py-4 text-center text-muted-foreground">
+      No emails yet in this category
     </div>
   );
 }

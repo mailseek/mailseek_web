@@ -16,7 +16,6 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.redirect(`${origin}/login`)
     }
     if (user.id !== ownerUserId) {
-      console.log('Not logged in as owner of inbox', { ownerUserId, user })
       return NextResponse.redirect(`${origin}/login`)
     }
     const { error, data } = await supabase.auth.exchangeCodeForSession(code)
@@ -66,9 +65,6 @@ async function writeConnectedAccount(accessToken: string, ownerUserId: string, c
   if (ownerUserId === connectedUserId) {
     console.log('Logging in with the same user, shouldnt do anything')
   } else {
-    console.log('Connected account', { ownerUserId, connectedUserId, connectedUserData, user: connectedUserData.data.user })
-    console.log('access_token', connectedUserData.access_token)
-    console.log('refresh_token', connectedUserData.refresh_token)
     const {
       access_token,
       refresh_token,

@@ -59,10 +59,6 @@ export default function Emails({
       setChannel(null);
       setIsConnected(false);
     });
-    ch.on("email_processed", (resp: {user_id: string, payload: {message: Message}}) => {
-      console.log("email_processed", resp);
-      setMessages((prev) => [resp.payload.message, ...prev]);
-    });
     ch.join()
       .receive("ok", (resp: { categories: string[] }) => {
         setIsConnected(true);
@@ -78,6 +74,16 @@ export default function Emails({
       ch.leave();
     };
   }, []);
+  useEffect(() => {
+    if (channel) {
+      channel.off('email_processed')
+      channel.on("email_processed", (resp: {user_id: string, payload: {message: Message}}) => {
+        if (resp.payload.message.category_id && resp.payload.message.category_id === selectedCategoryId) {
+          setMessages((prev) => [resp.payload.message, ...prev]);
+        }
+      });
+    }
+  }, [channel, selectedCategoryId]);
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-40 w-full border-b bg-background">

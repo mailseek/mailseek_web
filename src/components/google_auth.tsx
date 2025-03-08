@@ -25,8 +25,6 @@ export default function GoogleAuth({ redirectTo, title, queryParams }: Props) {
     })
     if (error) {
       console.error('Error signing in with Google', error)
-    } else {
-      console.log('Google auth', data)
     }
   }
   return <Button variant="outline" onClick={onLogin}>{title || 'Sign in with Google'}</Button>

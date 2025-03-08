@@ -7,17 +7,12 @@ export async function GET(request: Request) {
   const code = searchParams.get('code')
   // if "next" is in param, use it as the redirect URL
   const next = searchParams.get('next') ?? '/'
-  console.log('code', code)
   if (code) {
     const supabase = await createServerClient()
     const { error, data } = await supabase.auth.exchangeCodeForSession(code)
-    console.log('data', data)
     const google_token = data.session?.provider_token
     const refresh_token = data.session?.provider_refresh_token
     const expires_at = data.session?.expires_at
-    console.log('google_token', google_token)
-    console.log('refresh_token', refresh_token)
-    console.log('expires_at', expires_at)
     const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/google`, {
       method: 'POST',
       headers: {
@@ -32,7 +27,6 @@ export async function GET(request: Request) {
         expires_at,
       }),
     })
-    console.log('resp', resp)
     if (!error && resp.status === 200) {
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'

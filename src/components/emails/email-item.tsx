@@ -5,17 +5,35 @@ import { ChevronDown, ChevronUp, Info } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { Message } from "../../types/messages"
+import { Message, MessageContent } from "../../types/messages"
+import { Button } from "../ui/button"
+import { loadMessage } from "../../actions/messages"
+import ShowEmailModal from "./show-email-modal"
 interface EmailItemProps {
   message: Message
 }
 
 export function EmailItem({ message }: EmailItemProps) {
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+  const [content, setContent] = useState<MessageContent | null>(null)
+  const [loading, setLoading] = useState(false)
+  const onOpen = async () => {
+    try {
+      setLoading(true)
+      setIsOpen(true)
+      const resp = await loadMessage(message.message_id, message.user_id)
+      setContent(resp.content)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div className={cn("px-3 py-2 transition-colors hover:bg-accent/50 cursor-pointer", isExpanded && "bg-accent/30")}>
-      <div className="flex items-center justify-between" onClick={() => setIsExpanded(!isExpanded)}>
+      <div className="flex items-center justify-between gap-2" onClick={() => setIsExpanded(!isExpanded)}>
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <div className="flex-1">
             <div className="flex items-center gap-2">
@@ -67,10 +85,17 @@ export function EmailItem({ message }: EmailItemProps) {
             <ChevronDown className="h-4 w-4 text-muted-foreground" />
           )}
         </div>
+        <Button variant="ghost" size="sm" onClick={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          onOpen()
+        }}>
+          View Email
+        </Button>
       </div>
 
       {isExpanded && (
-        <div className="mt-2 pt-2 border-t text-xs grid grid-cols-2 gap-x-4 gap-y-1">
+        <div className="mt-2 pt-2 border-t text-xs grid grid-cols-1 gap-x-4 gap-y-1">
           <div className="flex items-start gap-1">
             <span className="font-medium">Summary:</span>
             <span className="text-muted-foreground">{message.summary}</span>
@@ -81,6 +106,7 @@ export function EmailItem({ message }: EmailItemProps) {
           </div>
         </div>
       )}
+      <ShowEmailModal message={message} content={content} loading={loading} isOpen={isOpen} onClose={() => setIsOpen(false)} />
     </div>
   )
 }
