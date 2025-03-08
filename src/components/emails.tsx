@@ -33,9 +33,7 @@ export default function Emails({
 }: Props) {
   const [isConnected, setIsConnected] = useState(false);
   const [channel, setChannel] = useState<Channel | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string>(
-    initialCategories[0].id
-  );
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [messages, setMessages] = useState<Message[]>([]);

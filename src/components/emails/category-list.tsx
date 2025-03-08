@@ -1,13 +1,11 @@
 "use client"
 
-import type { LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Category } from "@/types/messages"
 interface CategoryListProps {
   categories: Category[]
-  selectedCategory: string
+  selectedCategory: string | null
   onSelectCategory: (categoryId: string) => void
 }
 
@@ -21,7 +19,7 @@ export function CategoryList({ categories, selectedCategory, onSelectCategory }:
             key={category.id}
             variant="ghost"
             size="sm"
-            className={cn("w-full justify-start gap-2", selectedCategory === category.id && "bg-muted")}
+            className={cn("w-full justify-start gap-2", selectedCategory && selectedCategory === category.id && "bg-muted")}
             onClick={() => onSelectCategory(category.id)}
           >
             {/* <category.icon className="h-4 w-4" /> */}

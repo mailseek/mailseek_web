@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 import { Loader2 } from "lucide-react";
 type Props = {
   userId: string;
-  selectedCategoryId: string;
+  selectedCategoryId: string | null;
   categories: Category[];
   messages: Message[];
   setMessages: (messages: Message[]) => void;
@@ -21,11 +21,16 @@ export default function Inbox({
   messages,
   setMessages,
 }: Props) {
-  const [category, setCategory] = useState<Category | null>(categories.find((cat) => cat.id === selectedCategoryId) || null);
+  const [category, setCategory] = useState<Category | null>(
+    categories.find((cat) => cat.id === selectedCategoryId) || null
+  );
   const [loading, setLoading] = useState(false);
   useEffect(() => {
     const fetchMessages = async () => {
       try {
+        if (!selectedCategoryId) {
+          return;
+        }
         setLoading(true);
         const data = await getMessages(userId, selectedCategoryId);
         setMessages(data.messages);
@@ -39,9 +44,14 @@ export default function Inbox({
   }, [userId, selectedCategoryId]);
 
   useEffect(() => {
-    setCategory(categories.find((cat) => cat.id === selectedCategoryId) || null);
+    setCategory(
+      categories.find((cat) => cat.id === selectedCategoryId) || null
+    );
   }, [categories, selectedCategoryId]);
 
+  if (!selectedCategoryId) {
+    return <div className="py-4 text-center text-sm text-muted-foreground">Choose a category to see emails</div>;
+  }
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between">
@@ -50,22 +60,23 @@ export default function Inbox({
             {category?.name || "Emails"}
           </h1>
           <p className="text-muted-foreground">
-            {category?.definition || "Browse and manage your emails by category"}
+            {category?.definition ||
+              "Browse and manage your emails by category"}
           </p>
         </div>
       </div>
       <Separator className="my-3" />
       <div className="border rounded-lg overflow-hidden">
         <Suspense fallback={<Fallback loading={loading} />}>
-        <div className="divide-y">
-          {messages.length > 0 ? (
-            messages.map((message) => (
-              <EmailItem key={message.id} message={message} />
-            ))
-          ) : (
-            <Fallback loading={loading} />
-          )}
-        </div>
+          <div className="divide-y">
+            {messages.length > 0 ? (
+              messages.map((message) => (
+                <EmailItem key={message.id} message={message} />
+              ))
+            ) : (
+              <Fallback loading={loading} />
+            )}
+          </div>
         </Suspense>
       </div>
     </div>
