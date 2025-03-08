@@ -101,9 +101,9 @@ export default function Emails({
           </div>
         </div>
       </header>
-      <div className="container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-        <aside className="fixed top-16 z-30 -ml-2 hidden h-[calc(100vh-4rem)] w-full shrink-0 md:sticky md:block">
-          <ScrollArea className="h-full py-6 pr-6">
+      <div className="p-2 md:p-0 container flex-1 items-start md:grid md:grid-cols-[220px_minmax(0,1fr)] md:gap-6 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
+        <aside className="md:fixed top-16 z-30 md:-ml-2 md:h-[calc(100vh-4rem)] w-full shrink-0 md:sticky md:block">
+          <ScrollArea className="h-full py-6 md:pr-6">
             <div className="flex flex-col gap-4">
               <Button
                 className="w-full justify-start gap-2"
