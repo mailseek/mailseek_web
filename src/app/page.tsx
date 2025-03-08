@@ -38,7 +38,7 @@ export default async function Home() {
             <Mail className="w-4 h-4" />
             Start now
           </a> */}
-          <GoogleAuth />
+          <GoogleAuth redirectTo={`${process.env.NEXT_PUBLIC_URL}/auth/callback?next=/mail`} />
         </div>
       </main>
     </div>

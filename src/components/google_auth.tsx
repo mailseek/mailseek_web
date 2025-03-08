@@ -2,14 +2,21 @@
 import { createClient } from '@/supabase/client'
 import { Button } from '@/components/ui/button'
 
-export default function GoogleAuth() {
+type Props = {
+  redirectTo: string
+  queryParams?: Record<string, string>
+  title?: string
+}
+
+export default function GoogleAuth({ redirectTo, title, queryParams }: Props) {
   const onLogin = async () => {
     const supabase = createClient()
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${process.env.NEXT_PUBLIC_URL}/auth/callback`,
+        redirectTo,
         queryParams: {
+          ...queryParams,
           access_type: 'offline',
           prompt: 'consent',
         },
@@ -22,5 +29,5 @@ export default function GoogleAuth() {
       console.log('Google auth', data)
     }
   }
-  return <Button variant="outline" onClick={onLogin}>Sign in with Google</Button>
+  return <Button variant="outline" onClick={onLogin}>{title || 'Sign in with Google'}</Button>
 }

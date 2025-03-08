@@ -16,6 +16,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { CategoryList } from "@/components/emails/category-list";
+import GoogleAuth from "../google_auth";
 
 // Mock data for categories
 const defaultCategories = [
@@ -51,9 +52,15 @@ export default function DashboardView() {
     setIsNewCategoryModalOpen(false);
   };
 
+  const handleAddAccount = () => {
+    console.log("Add account");
+  };
+
   const dismissProcessingJobs = () => {
     setShowProcessingJobs(false);
   };
+
+  const user_id = "ab59c2ff-6c20-4de9-ae20-251caee45849"
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -67,6 +74,10 @@ export default function DashboardView() {
             <Button variant="ghost" size="icon">
               <AlertCircle className="h-5 w-5" />
             </Button>
+            <GoogleAuth
+              title="Add account"
+              redirectTo={`${process.env.NEXT_PUBLIC_URL}/auth/connect/${user_id}?next=/mail`}
+            />
           </div>
         </div>
       </header>
@@ -122,9 +133,7 @@ export default function DashboardView() {
                   <AlertCircle className="h-4 w-4" />
                   <AlertTitle>You are up to date!</AlertTitle>
                   <AlertDescription className="flex flex-col gap-2">
-                    <p>
-                      All new emails have been categorized.
-                    </p>
+                    <p>All new emails have been categorized.</p>
                   </AlertDescription>
                 </Alert>
               )}

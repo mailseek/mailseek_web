@@ -15,6 +15,11 @@ export default async function Page() {
 
   return (
     <div className="container mx-auto font-[family-name:var(--font-geist-sans)]">
+      <div className="text-muted-foreground text-sm">
+        <p>
+          You are logged in as {user.email}
+        </p>
+      </div>
       <Emails socketToken={token!} user={user} />
     </div>
   )
