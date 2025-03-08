@@ -8,6 +8,16 @@ interface ConnectedAccountsListProps {
 }
 
 export function ConnectedAccountsList({ connectedAccounts }: ConnectedAccountsListProps) {
+  if (connectedAccounts.length === 0) {
+    return (
+      <div className="space-y-1">
+      <h3 className="px-2 text-sm font-medium">Connected Accounts</h3>
+      <div className="space-y-1 text-xs text-muted-foreground">
+        <p>Your connected accounts will appear here.</p>
+      </div>
+    </div>
+    )
+  }
   return (
     <div className="space-y-1">
       <h3 className="px-2 text-sm font-medium">Connected Accounts</h3>
