@@ -189,7 +189,7 @@ export default function Emails({
               >
                 <Link href="/reports" className="w-full justify-start gap-2">
                   <BarChart3 className="h-4 w-4" />
-                  Show reports
+                  Reports & screenshots
                 </Link>
               </Button>
             </div>
