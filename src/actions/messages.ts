@@ -3,6 +3,56 @@
 import { Message, MessageContent, Report } from "../types/messages"
 import { getAuthToken } from "./socket"
 
+export async function deleteMessages(message_ids: string[], user_id: string) {
+  const {
+    data: token,
+    error,
+  } = await getAuthToken()
+  if (error) {
+    throw new Error('Failed to get auth token')
+  }
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/messages/delete`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message_ids, user_id }),
+  })
+  console.log(resp, process.env.NEXT_PUBLIC_BACKEND_URL)
+  if (resp.status !== 200) {
+    throw new Error('Failed to delete messages')
+  }
+  const data: {messages: Message[]} = await resp.json()
+
+  return data
+}
+
+export async function unsubscribeFromEmails(message_ids: string[], user_id: string) {
+  const {
+    data: token,
+    error,
+  } = await getAuthToken()
+
+  if (error) {
+    throw new Error('Failed to get auth token')
+  }
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/messages/unsubscribe`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message_ids, user_id }),
+  })
+
+  if (resp.status !== 200) {
+    throw new Error('Failed to unsubscribe from emails')
+  }
+  const data: {messages: Message[]} = await resp.json()
+  return data
+}
+
 export async function getReports(user_id: string) {
   const {
     data: token,

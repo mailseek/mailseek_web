@@ -1,17 +1,19 @@
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
-import { getMessages } from "../../actions/messages";
+import { Dispatch, SetStateAction, Suspense, useEffect, useState } from "react";
+import { getMessages, unsubscribeFromEmails, deleteMessages } from "../../actions/messages";
 import { Message, Category } from "../../types/messages";
 import { EmailItem } from "./email-item";
 import { Separator } from "@/components/ui/separator";
-import { Loader2 } from "lucide-react";
+import { BellOff, Loader2, Mail, Trash } from "lucide-react";
+import { Button } from "../ui/button";
+
 type Props = {
   userId: string;
   selectedCategoryId: string | null;
   categories: Category[];
   messages: Message[];
-  setMessages: (messages: Message[]) => void;
+  setMessages: Dispatch<SetStateAction<Message[]>>;
 };
 
 export default function Inbox({
@@ -25,6 +27,48 @@ export default function Inbox({
     categories.find((cat) => cat.id === selectedCategoryId) || null
   );
   const [loading, setLoading] = useState(false);
+  const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
+
+  const handleUnsubscribeFromEmails = async () => {
+    if (selectedMessages.length === 0) {
+      return;
+    }
+    console.log('Unsubscribing from emails', selectedMessages);
+    const data = await unsubscribeFromEmails(selectedMessages, userId);
+    const ids = data.messages.map((message) => message.message_id);
+    setMessages((prev) => {
+      return prev.map((message) => {
+        if (ids.includes(message.message_id)) {
+          return {
+            ...message,
+            status: 'unsubscribing',
+          }
+        }
+        return message;
+      })
+    });
+  };
+
+  const handleDeleteMessages = async () => {
+    if (selectedMessages.length === 0) {
+      return;
+    }
+    console.log('Deleting messages', selectedMessages);
+    const data = await deleteMessages(selectedMessages, userId);
+    const ids = data.messages.map((message) => message.message_id);
+    setMessages((prev) => {
+      return prev.map((message) => {
+        if (ids.includes(message.message_id)) {
+          return {
+            ...message,
+            status: 'deleted',
+          }
+        }
+        return message;
+      })
+    });
+  };
+
   useEffect(() => {
     const fetchMessages = async () => {
       try {
@@ -50,7 +94,11 @@ export default function Inbox({
   }, [categories, selectedCategoryId]);
 
   if (!selectedCategoryId) {
-    return <div className="py-4 text-center text-sm text-muted-foreground">Choose a category to see emails</div>;
+    return (
+      <div className="py-4 text-center text-sm text-muted-foreground">
+        Choose a category to see emails
+      </div>
+    );
   }
   return (
     <div className="flex flex-col gap-2">
@@ -66,12 +114,42 @@ export default function Inbox({
         </div>
       </div>
       <Separator className="my-3" />
+      <div className="flex items-center gap-2 justify-end">
+        <Button
+          variant="destructive"
+          size="sm"
+          disabled={selectedMessages.length === 0}
+          onClick={() => {
+            handleDeleteMessages();
+          }}
+        >
+          <Trash className="w-4 h-4" />
+          Delete
+        </Button>
+        <Button variant="outline" size="sm" disabled={selectedMessages.length === 0} onClick={() => {
+          handleUnsubscribeFromEmails();
+        }}>
+          <BellOff className="w-4 h-4" />
+          Unsubscribe
+        </Button>
+      </div>
       <div className="border rounded-lg overflow-hidden">
         <Suspense fallback={<Fallback loading={loading} />}>
           <div className="divide-y">
             {messages.length > 0 ? (
               messages.map((message) => (
-                <EmailItem key={message.id} message={message} />
+                <EmailItem
+                  key={message.id}
+                  message={message}
+                  selected={selectedMessages.includes(message.message_id)}
+                  onSelect={(messageId) => {
+                    setSelectedMessages((prev) =>
+                      prev.includes(messageId)
+                        ? prev.filter((id) => id !== messageId)
+                        : [...prev, messageId]
+                    );
+                  }}
+                />
               ))
             ) : (
               <Fallback loading={loading} />

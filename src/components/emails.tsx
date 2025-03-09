@@ -78,6 +78,8 @@ export default function Emails({
   useEffect(() => {
     if (channel) {
       channel.off("email_processed");
+      channel.off("email_updated");
+
       channel.on(
         "email_processed",
         (resp: { user_id: string; payload: { message: Message } }) => {
@@ -87,6 +89,25 @@ export default function Emails({
           ) {
             setMessages((prev) => [resp.payload.message, ...prev]);
           }
+        }
+      );
+      channel.on(
+        "email_updated",
+        (resp: { user_id: string; payload: { message: Message } }) => {
+          if (resp.payload.message.status === 'processed') {
+            return
+          }
+          setMessages((prev) => {
+            return prev.map((message) => {
+              if (message.message_id === resp.payload.message.message_id) {
+                return {
+                  ...message,
+                  ...resp.payload.message
+                };
+              }
+              return message;
+            })
+          });
         }
       );
     }

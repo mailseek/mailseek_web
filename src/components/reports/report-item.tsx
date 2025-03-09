@@ -1,10 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { Report } from "../../types/messages"
 import { Badge } from "../ui/badge"
+import { ChevronDown } from "lucide-react"
+import { ChevronUp } from "lucide-react"
 
 interface ReportItemProps {
   report: Report
@@ -26,20 +27,13 @@ export function ReportItem({ report }: ReportItemProps) {
                 {report.type}
               </h3>
             </div>
-            <div className="flex items-center text-xs text-muted-foreground">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <p className="truncate max-w-[200px] md:max-w-[300px]">Status: {report.status}</p>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {report.payload.order ? <p>Order: {report.payload.order}</p> : null}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
           </div>
         </div>
+        {isExpanded ? (
+          <ChevronUp className="h-4 w-4 text-muted-foreground" />
+        ) : (
+          <ChevronDown className="h-4 w-4 text-muted-foreground" />
+        )}
       </div>
 
       {isExpanded && (

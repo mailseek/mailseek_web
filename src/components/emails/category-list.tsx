@@ -1,15 +1,19 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
-import { Category } from "@/types/messages"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Category } from "@/types/messages";
 interface CategoryListProps {
-  categories: Category[]
-  selectedCategory: string | null
-  onSelectCategory: (categoryId: string) => void
+  categories: Category[];
+  selectedCategory: string | null;
+  onSelectCategory: (categoryId: string) => void;
 }
 
-export function CategoryList({ categories, selectedCategory, onSelectCategory }: CategoryListProps) {
+export function CategoryList({
+  categories,
+  selectedCategory,
+  onSelectCategory,
+}: CategoryListProps) {
   return (
     <div className="space-y-1">
       <h3 className="px-2 text-sm font-medium">Categories</h3>
@@ -19,7 +23,10 @@ export function CategoryList({ categories, selectedCategory, onSelectCategory }:
             key={category.id}
             variant="ghost"
             size="sm"
-            className={cn("w-full justify-start gap-2", selectedCategory && selectedCategory === category.id && "bg-muted")}
+            className={cn(
+              "w-full justify-start gap-2",
+              selectedCategory && selectedCategory === category.id && "bg-muted"
+            )}
             onClick={() => onSelectCategory(category.id)}
           >
             {/* <category.icon className="h-4 w-4" /> */}
@@ -31,7 +38,18 @@ export function CategoryList({ categories, selectedCategory, onSelectCategory }:
             )} */}
           </Button>
         ))}
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => onSelectCategory("no_category")}
+          className={cn(
+            "w-full justify-start gap-2",
+            selectedCategory && selectedCategory === "no_category" && "bg-muted"
+          )}
+        >
+          <span className="flex-1 text-left">Uncategorized</span>
+        </Button>
       </div>
     </div>
-  )
+  );
 }

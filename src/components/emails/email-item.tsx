@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { ChevronDown, ChevronUp, Info } from "lucide-react"
+import { ChevronDown, ChevronUp, Info, Loader2 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
@@ -9,11 +9,14 @@ import { Message, MessageContent } from "../../types/messages"
 import { Button } from "../ui/button"
 import { loadMessage } from "../../actions/messages"
 import ShowEmailModal from "./show-email-modal"
+import { Checkbox } from "../ui/checkbox"
 interface EmailItemProps {
   message: Message
+  selected: boolean
+  onSelect: (messageId: string) => void
 }
 
-export function EmailItem({ message }: EmailItemProps) {
+export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
   const [isExpanded, setIsExpanded] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
   const [content, setContent] = useState<MessageContent | null>(null)
@@ -34,11 +37,25 @@ export function EmailItem({ message }: EmailItemProps) {
   return (
     <div className={cn("px-3 py-2 transition-colors hover:bg-accent/50 cursor-pointer", isExpanded && "bg-accent/30")}>
       <div className="flex items-center justify-between gap-2" onClick={() => setIsExpanded(!isExpanded)}>
+        <div className="flex items-center gap-2 hover:bg-muted-foreground/50 p-3 rounded-md" onClick={(e) => {
+          e.stopPropagation()
+          onSelect(message.message_id)
+        }}>
+          <Checkbox
+            id={`select-email-${message.message_id}`}
+            checked={selected}
+            className="border-muted-foreground/50 cursor-pointer"
+          />
+        </div>
         <div className="flex-1 min-w-0 flex items-center gap-2">
           <div className="flex-1">
             <div className="flex items-center gap-2">
               <h3 className="font-medium truncate text-sm gap-2 flex items-center">
                 {message.need_action ? <Badge variant="outline" className="text-xs text-yellow-500 h-5">Action Needed</Badge> : null}
+                {message.status === 'deleted' ? <Badge variant="outline" className="text-xs text-red-500 h-5">Deleted</Badge> : null}
+                {message.status === 'unsubscribing' ? <Badge variant="outline" className="text-xs text-red-500 h-5"><Loader2 className="animate-spin" /> Unsubscribing</Badge> : null}
+                {message.status === 'unsubscribed' ? <Badge variant="outline" className="text-xs text-red-500 h-5">Unsubscribed</Badge> : null}
+                {message.status === 'unsubscribe_link_not_found' ? <Badge variant="outline" className="text-xs text-red-500 h-5">Unsubscribe Link Not Found</Badge> : null}
                 {message.subject}
               </h3>
             </div>
@@ -78,7 +95,18 @@ export function EmailItem({ message }: EmailItemProps) {
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <span className="text-xs text-muted-foreground whitespace-nowrap">{new Date().toLocaleDateString()}</span>
+          <span className="text-xs text-muted-foreground whitespace-nowrap">
+            {message.sent_at
+              ? new Date(message.sent_at + "Z").toLocaleString(
+                  navigator.language || navigator.languages[0] || 'en-US',
+                  {
+                    dateStyle: 'short',
+                    timeStyle: 'short',
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone
+                  }
+                )
+              : 'n/a'}
+          </span>
           {isExpanded ? (
             <ChevronUp className="h-4 w-4 text-muted-foreground" />
           ) : (

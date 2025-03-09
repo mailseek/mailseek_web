@@ -5,6 +5,7 @@ export type Message = {
   user_id: string
   subject: string
   from: string
+  status: string
   to: string
   model: string
   temperature: number
@@ -12,6 +13,7 @@ export type Message = {
   reason: string
   need_action: boolean
   category_id: string | null
+  sent_at: string | null
 }
 
 export type Category = {
