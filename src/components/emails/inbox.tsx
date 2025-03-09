@@ -96,6 +96,7 @@ export default function Inbox({
     setCategory(
       categories.find((cat) => cat.id === selectedCategoryId) || null
     );
+    setSelectedMessages([]);
   }, [categories, selectedCategoryId]);
 
   if (!selectedCategoryId) {
