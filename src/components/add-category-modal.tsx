@@ -26,11 +26,13 @@ export default function AddCategoryModal(props: Props) {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
+    reset,
   } = useForm<CategoryForm>()
 
   const onSubmit = async (data: CategoryForm) => {
     const resp = await addCategory(props.userId, data)
     props.onSubmit(resp.categories)
+    reset()
   }
 
   return (
