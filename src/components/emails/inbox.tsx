@@ -9,9 +9,10 @@ import {
 import { Message, Category } from "../../types/messages";
 import { EmailItem } from "./email-item";
 import { Separator } from "@/components/ui/separator";
-import { BellOff, Loader2, Mail, Trash } from "lucide-react";
+import { BellOff, Loader2, RefreshCcw, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
+import { cn } from "../../lib/utils";
 
 type Props = {
   userId: string;
@@ -74,25 +75,26 @@ export default function Inbox({
     });
   };
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        if (!selectedCategoryId) {
-          return;
-        }
-        setLoading(true);
-        const data = await getMessages(userId, selectedCategoryId);
-        if (!data || !data.messages) {
-          return
-        }
-        setMessages(data.messages);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
+  const fetchMessages = async (categoryId: string | null) => {
+    try {
+      if (!categoryId) {
+        return;
       }
-    };
-    fetchMessages();
+      setLoading(true);
+      const data = await getMessages(userId, categoryId);
+      if (!data || !data.messages) {
+        return
+      }
+      setMessages(data.messages);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMessages(selectedCategoryId);
   }, [userId, selectedCategoryId]);
 
   useEffect(() => {
@@ -121,6 +123,11 @@ export default function Inbox({
               "Browse and manage your emails by category"}
           </p>
         </div>
+        <Button variant="outline" size="icon" onClick={() => fetchMessages(selectedCategoryId)} disabled={loading}>
+          <RefreshCcw className={cn("w-4 h-4", {
+            "animate-spin": loading
+          })} />
+        </Button>
       </div>
       <Separator className="my-3" />
       <div className="flex items-center justify-between">
@@ -171,7 +178,7 @@ export default function Inbox({
       <div className="border rounded-lg overflow-hidden">
         <Suspense fallback={<Fallback loading={loading} />}>
           <div className="divide-y">
-            {messages.length > 0 ? (
+            {messages.length > 0 && !loading ? (
               messages.map((message) => (
                 <EmailItem
                   key={message.id}
