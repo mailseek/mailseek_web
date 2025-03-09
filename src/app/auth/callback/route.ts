@@ -10,7 +10,6 @@ export async function GET(request: Request) {
   if (code) {
     const supabase = await createServerClient()
     const { error, data } = await supabase.auth.exchangeCodeForSession(code)
-    console.log(`data and error at auth callback`, data, error)
     const google_token = data.session?.provider_token
     const refresh_token = data.session?.provider_refresh_token
     const expires_at = data.session?.expires_at
