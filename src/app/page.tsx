@@ -16,6 +16,9 @@ export default async function Home() {
           height={38}
           priority
         />
+        <h1 className="text-2xl font-bold">
+          Your emails. Sorted out.
+        </h1>
         <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)] gap-2 flex flex-col">
           <li>
             Sort your emails efficiently with AI
