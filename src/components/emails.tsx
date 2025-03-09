@@ -86,7 +86,21 @@ export default function Emails({
             resp.payload.message.category_id &&
             resp.payload.message.category_id === selectedCategoryId
           ) {
-            setMessages((prev) => [resp.payload.message, ...prev]);
+            setMessages((prev) => {
+              const ids = prev.map((message) => message.message_id);
+              if (ids.includes(resp.payload.message.message_id)) {
+                return prev.map((message) => {
+                  if (message.message_id === resp.payload.message.message_id) {
+                    return {
+                      ...message,
+                      ...resp.payload.message,
+                    };
+                  }
+                  return message;
+                });
+              }
+              return [resp.payload.message, ...prev];
+            });
           }
         }
       );

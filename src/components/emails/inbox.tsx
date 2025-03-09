@@ -134,7 +134,7 @@ export default function Inbox({
           >
             <Checkbox
               id={`select-all-emails`}
-              checked={selectedMessages.length === messages.length}
+              checked={selectedMessages.length === messages.length && messages.length > 0}
               className="border-muted-foreground/50 cursor-pointer"
             />
           </div>
