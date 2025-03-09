@@ -50,7 +50,7 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
         className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2"
         onClick={() => setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full">
           <div
             className="flex flex-col justify-between md:justify-start md:flex-row items-center gap-2 hover:bg-muted-foreground/50 p-3 rounded-md"
             onClick={(e) => {
@@ -66,7 +66,7 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
           </div>
           <div className="flex-1 min-w-0 flex items-center gap-2">
             <div className="flex-1">
-              <div className="flex justify-between items-center md:hidden gap-2">
+              <div className="w-full flex justify-between items-center md:hidden gap-2">
                 <StatusBadge message={message} />
                 <div className="flex items-center gap-2">
                   <SentAt message={message} className="flex items-center" />

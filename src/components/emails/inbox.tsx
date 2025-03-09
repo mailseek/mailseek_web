@@ -1,12 +1,17 @@
 "use client";
 
 import { Dispatch, SetStateAction, Suspense, useEffect, useState } from "react";
-import { getMessages, unsubscribeFromEmails, deleteMessages } from "../../actions/messages";
+import {
+  getMessages,
+  unsubscribeFromEmails,
+  deleteMessages,
+} from "../../actions/messages";
 import { Message, Category } from "../../types/messages";
 import { EmailItem } from "./email-item";
 import { Separator } from "@/components/ui/separator";
 import { BellOff, Loader2, Mail, Trash } from "lucide-react";
 import { Button } from "../ui/button";
+import { Checkbox } from "../ui/checkbox";
 
 type Props = {
   userId: string;
@@ -41,11 +46,11 @@ export default function Inbox({
         if (ids.includes(message.message_id)) {
           return {
             ...message,
-            status: 'unsubscribing',
-          }
+            status: "unsubscribing",
+          };
         }
         return message;
-      })
+      });
     });
   };
 
@@ -61,11 +66,11 @@ export default function Inbox({
         if (ids.includes(message.message_id)) {
           return {
             ...message,
-            status: 'deleted',
-          }
+            status: "deleted",
+          };
         }
         return message;
-      })
+      });
     });
   };
 
@@ -114,24 +119,50 @@ export default function Inbox({
         </div>
       </div>
       <Separator className="my-3" />
-      <div className="flex items-center gap-2 justify-end">
-        <Button
-          variant="destructive"
-          size="sm"
-          disabled={selectedMessages.length === 0}
-          onClick={() => {
-            handleDeleteMessages();
-          }}
-        >
-          <Trash className="w-4 h-4" />
-          Delete
-        </Button>
-        <Button variant="outline" size="sm" disabled={selectedMessages.length === 0} onClick={() => {
-          handleUnsubscribeFromEmails();
-        }}>
-          <BellOff className="w-4 h-4" />
-          Unsubscribe
-        </Button>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <div
+            className="ml-[13px] flex flex-col justify-between md:justify-start md:flex-row items-center gap-2 hover:bg-muted-foreground/50 p-3 rounded-md cursor-pointer"
+            onClick={(e) => {
+              setSelectedMessages(
+                selectedMessages.length === messages.length
+                  ? []
+                  : messages.map((message) => message.message_id)
+              );
+            }}
+          >
+            <Checkbox
+              id={`select-all-emails`}
+              checked={selectedMessages.length === messages.length}
+              className="border-muted-foreground/50 cursor-pointer"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 justify-end">
+          <Button
+            variant="destructive"
+            size="sm"
+            disabled={selectedMessages.length === 0}
+            onClick={() => {
+              handleDeleteMessages();
+            }}
+          >
+            <Trash className="w-4 h-4" />
+            Delete
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={selectedMessages.length === 0}
+            onClick={() => {
+              handleUnsubscribeFromEmails();
+            }}
+          >
+            <BellOff className="w-4 h-4" />
+            Unsubscribe
+          </Button>
+        </div>
       </div>
       <div className="border rounded-lg overflow-hidden">
         <Suspense fallback={<Fallback loading={loading} />}>
