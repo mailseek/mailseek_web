@@ -25,3 +25,15 @@ export type MessageContent = {
   html: string
   text: string
 }
+
+export type Report = {
+  id: string
+  message_id: string
+  type: string
+  status: string
+  user_id: string
+  payload: {
+    image_path?: string
+    order?: number
+  }
+}

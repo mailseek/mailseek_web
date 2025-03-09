@@ -1,7 +1,27 @@
 'use server'
 
-import { Message, MessageContent } from "../types/messages"
+import { Message, MessageContent, Report } from "../types/messages"
 import { getAuthToken } from "./socket"
+
+export async function getReports(user_id: string) {
+  const {
+    data: token,
+    error,
+  } = await getAuthToken()
+  if (error) {
+    throw new Error('Failed to get auth token')
+  }
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/reports?user_id=${user_id}`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+  const data: {
+    reports: Report[]
+  } = await resp.json()
+  return data
+}
 
 export async function loadMessage(message_id: string, user_id: string) {
   const {

@@ -3,7 +3,7 @@ import React, { Suspense, useEffect, useState } from "react";
 import socket from "../socket";
 import { Channel } from "phoenix";
 import { logRealtime } from "../lib/utils";
-import { Mail, Plus } from "lucide-react";
+import { BarChart3, Mail, Plus } from "lucide-react";
 import { Button } from "./ui/button";
 import GoogleAuth from "./google_auth";
 import { Separator } from "./ui/separator";
@@ -14,6 +14,7 @@ import { Category, Message } from "../types/messages";
 import AddCategoryModal from "./add-category-modal";
 import { MailseekUser } from "../types/users";
 import { ConnectedAccountsList } from "./emails/connected-accounts-list";
+import Reports from "./reports/reports";
 
 type Props = {
   socketToken: string;
@@ -33,11 +34,13 @@ export default function Emails({
 }: Props) {
   const [isConnected, setIsConnected] = useState(false);
   const [channel, setChannel] = useState<Channel | null>(null);
-  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null);
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(
+    null
+  );
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [messages, setMessages] = useState<Message[]>([]);
-
+  const [showReports, setShowReports] = useState(false);
   useEffect(() => {
     const name = `emails:all`;
     if (!socket) {
@@ -74,12 +77,18 @@ export default function Emails({
   }, []);
   useEffect(() => {
     if (channel) {
-      channel.off('email_processed')
-      channel.on("email_processed", (resp: {user_id: string, payload: {message: Message}}) => {
-        if (resp.payload.message.category_id && resp.payload.message.category_id === selectedCategoryId) {
-          setMessages((prev) => [resp.payload.message, ...prev]);
+      channel.off("email_processed");
+      channel.on(
+        "email_processed",
+        (resp: { user_id: string; payload: { message: Message } }) => {
+          if (
+            resp.payload.message.category_id &&
+            resp.payload.message.category_id === selectedCategoryId
+          ) {
+            setMessages((prev) => [resp.payload.message, ...prev]);
+          }
         }
-      });
+      );
     }
   }, [channel, selectedCategoryId]);
   return (
@@ -137,17 +146,33 @@ export default function Emails({
               <Separator className="my-2" />
 
               <ConnectedAccountsList connectedAccounts={connectedAccounts} />
+              <Separator className="my-2" />
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2"
+                onClick={() => {
+                  setSelectedCategoryId(null);
+                  setShowReports(true);
+                }}
+              >
+                <BarChart3 className="h-4 w-4" />
+                Show reports
+              </Button>
             </div>
           </ScrollArea>
         </aside>
         <main className="mt-4 flex w-full flex-col overflow-hidden">
-          <Inbox
-            messages={messages}
-            setMessages={setMessages}
-            userId={user.id}
-            selectedCategoryId={selectedCategoryId}
-            categories={categories}
-          />
+          {showReports && !selectedCategoryId ? (
+            <Reports user_id={user.id} />
+          ) : (
+            <Inbox
+              messages={messages}
+              setMessages={setMessages}
+              userId={user.id}
+              selectedCategoryId={selectedCategoryId}
+              categories={categories}
+            />
+          )}
         </main>
       </div>
     </div>
