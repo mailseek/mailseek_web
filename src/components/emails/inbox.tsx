@@ -36,6 +36,7 @@ export default function Inbox({
     console.log('Unsubscribing from emails', selectedMessages);
     const data = await unsubscribeFromEmails(selectedMessages, userId);
     const ids = data.messages.map((message) => message.message_id);
+    setSelectedMessages([]);
     setMessages((prev) => {
       return prev.map((message) => {
         if (ids.includes(message.message_id)) {
@@ -56,6 +57,7 @@ export default function Inbox({
     console.log('Deleting messages', selectedMessages);
     const data = await deleteMessages(selectedMessages, userId);
     const ids = data.messages.map((message) => message.message_id);
+    setSelectedMessages([]);
     setMessages((prev) => {
       return prev.map((message) => {
         if (ids.includes(message.message_id)) {
