@@ -82,6 +82,9 @@ export default function Inbox({
         }
         setLoading(true);
         const data = await getMessages(userId, selectedCategoryId);
+        if (!data || !data.messages) {
+          return
+        }
         setMessages(data.messages);
       } catch (error) {
         console.error(error);
