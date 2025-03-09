@@ -14,7 +14,7 @@ import { Category, Message } from "../types/messages";
 import AddCategoryModal from "./add-category-modal";
 import { MailseekUser } from "../types/users";
 import { ConnectedAccountsList } from "./emails/connected-accounts-list";
-import Reports from "./reports/reports";
+import Link from "next/link";
 
 type Props = {
   socketToken: string;
@@ -40,7 +40,6 @@ export default function Emails({
   const [isAddCategoryModalOpen, setIsAddCategoryModalOpen] = useState(false);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [showReports, setShowReports] = useState(false);
   useEffect(() => {
     const name = `emails:all`;
     if (!socket) {
@@ -94,19 +93,19 @@ export default function Emails({
       channel.on(
         "email_updated",
         (resp: { user_id: string; payload: { message: Message } }) => {
-          if (resp.payload.message.status === 'processed') {
-            return
+          if (resp.payload.message.status === "processed") {
+            return;
           }
           setMessages((prev) => {
             return prev.map((message) => {
               if (message.message_id === resp.payload.message.message_id) {
                 return {
                   ...message,
-                  ...resp.payload.message
+                  ...resp.payload.message,
                 };
               }
               return message;
-            })
+            });
           });
         }
       );
@@ -168,32 +167,28 @@ export default function Emails({
 
               <ConnectedAccountsList connectedAccounts={connectedAccounts} />
               <Separator className="my-2" />
+
               <Button
                 variant="outline"
                 className="w-full justify-start gap-2"
-                onClick={() => {
-                  setSelectedCategoryId(null);
-                  setShowReports(true);
-                }}
+                asChild
               >
-                <BarChart3 className="h-4 w-4" />
-                Show reports
+                <Link href="/reports" className="w-full justify-start gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Show reports
+                </Link>
               </Button>
             </div>
           </ScrollArea>
         </aside>
         <main className="mt-4 flex w-full flex-col overflow-hidden">
-          {showReports && !selectedCategoryId ? (
-            <Reports user_id={user.id} />
-          ) : (
-            <Inbox
-              messages={messages}
-              setMessages={setMessages}
-              userId={user.id}
-              selectedCategoryId={selectedCategoryId}
-              categories={categories}
-            />
-          )}
+          <Inbox
+            messages={messages}
+            setMessages={setMessages}
+            userId={user.id}
+            selectedCategoryId={selectedCategoryId}
+            categories={categories}
+          />
         </main>
       </div>
     </div>
