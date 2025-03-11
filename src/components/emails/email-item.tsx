@@ -46,112 +46,121 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
         isExpanded && "bg-accent/30"
       )}
     >
-      <div
-        className="flex flex-col md:flex-row items-start md:items-center justify-between gap-2"
-        onClick={() => setIsExpanded(!isExpanded)}
-      >
-        <div className="flex items-center gap-2 w-full">
-          <div
-            className="flex flex-col justify-between md:justify-start md:flex-row items-center gap-2 hover:bg-muted-foreground/50 p-3 rounded-md"
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(message.message_id);
-            }}
-          >
-            <Checkbox
-              id={`select-email-${message.message_id}`}
-              checked={selected}
-              className="border-muted-foreground/50 cursor-pointer"
-            />
-          </div>
-          <div className="flex-1 min-w-0 flex items-center gap-2">
-            <div className="flex-1">
-              <div className="w-full flex justify-between items-center md:hidden gap-2">
-                <StatusBadge message={message} />
-                <div className="flex items-center gap-2">
-                  <SentAt message={message} className="flex items-center" />
-                  <Button
-                    variant="default"
-                    size="icon"
-                    className="md:hidden mt-4"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      onOpen();
-                    }}
-                  >
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                  </Button>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <h3 className="font-medium truncate text-sm gap-2 flex flex-col md:flex-row items-start md:items-center">
-                  <div className="hidden md:block">
-                    <StatusBadge message={message} />
-                  </div>
-                  <span>{message.subject}</span>
-                </h3>
-              </div>
-              <div className="flex items-center text-xs text-muted-foreground">
+      <div className="flex flex-col" onClick={() => setIsExpanded(!isExpanded)}>
+        {/* Action buttons row - now at the top */}
+        <div className="flex items-center justify-between w-full">
+          <div className="flex items-center gap-2 w-full">
+            <div
+              className="flex flex-col justify-between md:justify-start md:flex-row items-center gap-2 hover:bg-muted-foreground/50 p-3 rounded-md shrink-0"
+              onClick={(e) => {
+                e.stopPropagation();
+                onSelect(message.message_id);
+              }}
+            >
+              <Checkbox
+                id={`select-email-${message.message_id}`}
+                checked={selected}
+                className="border-muted-foreground/50 cursor-pointer"
+              />
+            </div>
+            <div className="w-full justify-between flex items-center gap-2 text-xs text-muted-foreground line-clamp-1 text-ellipsis">
+              <div className="flex items-center max-w-64 md:max-w-54 lg:max-w-full">
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <p className="truncate max-w-[200px] md:max-w-[300px]">
-                        From: {message.from}
-                      </p>
+                      <p className="truncate">{message.from}</p>
                     </TooltipTrigger>
                     <TooltipContent>
-                      <p>{message.from}</p>
+                      <p>To: {message.to}</p>
+                      <p>From: {message.from}</p>
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               </div>
-
-              <div className="flex items-center text-xs text-muted-foreground mt-1">
-                <p className="line-clamp-2 overflow-hidden text-ellipsis">
-                  <span>{message.summary}</span>
-                </p>
-              </div>
+              <Button
+                variant="default"
+                size="icon"
+                className="md:hidden"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  onOpen();
+                }}
+              >
+                <Mail className="h-4 w-4 text-muted-foreground" />
+              </Button>
             </div>
           </div>
-        </div>
-        <div className="flex flex-col md:flex-row items-center gap-2">
-          <div className="hidden md:flex items-center gap-2 shrink-0">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <div className="flex items-center gap-1 hidden md:block">
-                    <Info className="h-3.5 w-3.5 text-muted-foreground" />
-                  </div>
-                </TooltipTrigger>
-                <TooltipContent className="max-w-[300px]">
-                  <p>
-                    Model: <span className="font-bold">{message.model}</span>
-                  </p>
-                  <p>Temperature: {message.temperature}</p>
-                  <p>Why this category: {message.reason}</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-            <SentAt message={message} className="hidden md:block" />
-            {isExpanded ? (
-              <ChevronUp className="hidden md:block h-4 w-4 text-muted-foreground" />
-            ) : (
-              <ChevronDown className="hidden md:block h-4 w-4 text-muted-foreground" />
-            )}
+          {/* Other action buttons remain on the right */}
+          <div id="action-buttons" className="flex items-center gap-3 shrink-0">
+            <SentAt message={message} className="hidden md:block text-xs" />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden md:block shrink-0 whitespace-nowrap"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onOpen();
+              }}
+            >
+              View Email
+            </Button>
+            <button
+              className="hidden md:flex items-center bg-transparent border-none cursor-pointer"
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsExpanded(!isExpanded);
+              }}
+            >
+              {isExpanded ? (
+                <ChevronUp className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                <ChevronDown className="h-4 w-4 text-muted-foreground" />
+              )}
+            </button>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            className="hidden md:block"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onOpen();
-            }}
-          >
-            View Email
-          </Button>
+        </div>
+
+        {/* Row with checkbox, status badge, and subject */}
+        <div className="flex items-center w-full">
+          <div className="hidden md:block shrink-0">
+            <StatusBadge message={message} />
+          </div>
+          <div className="flex-1 min-w-0 overflow-hidden pr-4">
+            <h3 className="font-medium text-sm break-words">
+              {message.subject}
+            </h3>
+          </div>
+        </div>
+
+        {/* From line */}
+        <div className="hidden md:block flex items-center text-xs text-muted-foreground overflow-hidden w-full">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <p className="truncate w-full">From: {message.from}</p>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{message.from}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
+
+        {/* Summary */}
+        <div className="flex items-center text-xs text-muted-foreground overflow-hidden w-full">
+          <p className="line-clamp-2 overflow-hidden text-ellipsis w-full">
+            <span className="break-words">{message.summary}</span>
+          </p>
+        </div>
+
+        {/* Mobile status badge and date */}
+        <div className="w-full flex justify-between items-center md:hidden gap-2 mt-1">
+          <StatusBadge message={message} />
+          <div className="flex items-center gap-2 shrink-0">
+            <SentAt message={message} className="flex items-center" />
+          </div>
         </div>
       </div>
 
@@ -165,9 +174,22 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
             <span className="font-medium">From:</span>
             <span className="text-muted-foreground">{message.from}</span>
           </div>
-          <div className="flex items-start gap-1">
+          <div className="flex flex-col items-start gap-1">
             <span className="font-medium">Summary:</span>
             <span className="text-muted-foreground">{message.summary}</span>
+          </div>
+          <div className="col-span-2 flex items-start gap-1">
+            <span className="font-medium">Model:</span>
+            <span className="text-muted-foreground">{message.model}</span>
+          </div>
+          <div className="col-span-2 flex items-start gap-1">
+            <span className="font-medium">Temperature:</span>
+            <span className="text-muted-foreground">{message.temperature}</span>
+          </div>
+          <div className="col-span-2 flex items-start gap-1"></div>
+          <div className="col-span-2 flex flex-col items-start gap-1">
+            <span className="font-medium">Why this category:</span>
+            <span className="text-muted-foreground">{message.reason}</span>
           </div>
         </div>
       )}
