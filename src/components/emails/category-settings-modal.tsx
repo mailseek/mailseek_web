@@ -14,7 +14,7 @@ import {
   CategorySettingsItem,
 } from "../../types/messages";
 import { Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
   getCategorySettings,
   saveCategorySettings,
@@ -85,6 +85,7 @@ export default function CategorySettingsModal(props: Props) {
         <SettingsContent
           settings={settings}
           loading={loading}
+          onChangeSettings={setSettings}
           onSave={handleSaveSettings}
         />
       </DialogContent>
@@ -95,16 +96,14 @@ export default function CategorySettingsModal(props: Props) {
 function SettingsContent(props: {
   settings: CategorySettings | null;
   loading: boolean;
+  onChangeSettings: Dispatch<SetStateAction<CategorySettings | null>>;
   onSave: (values: CategorySettings | null) => Promise<void>;
 }) {
-  const [settings, setSettings] = useState<CategorySettings | null>(
-    props.settings
-  );
   const onCheckboxChange = (item: CategorySettingsItem, checked: boolean) => {
-    setSettings({
-      ...settings,
+    props.onChangeSettings({
+      ...props.settings,
       items:
-        settings?.items.map((i) => {
+        props.settings?.items.map((i) => {
           if (i.id === item.id && i.key === item.key) {
             return { ...i, value: { ...i.value, value: checked } };
           }
@@ -119,7 +118,7 @@ function SettingsContent(props: {
       </div>
     );
   }
-  if (!settings) {
+  if (!props.settings) {
     return (
       <div className="flex flex-col items-center justify-center h-full">
         <Separator className="my-4" />
@@ -138,7 +137,7 @@ function SettingsContent(props: {
           These settings will be applied to all emails in this category.
         </p>
         <div className="grid grid-cols-2 gap-2">
-          {settings.items.map((item) => (
+          {props.settings.items.map((item) => (
             <div className="flex flex-col gap-2" key={item.id}>
               {item.value.type === "boolean" ? (
                 <BooleanSetting
@@ -152,8 +151,8 @@ function SettingsContent(props: {
       </div>
       <DialogFooter>
         <Button
-          disabled={props.loading || !settings}
-          onClick={() => props.onSave(settings)}
+          disabled={props.loading || !props.settings}
+          onClick={() => props.onSave(props.settings)}
         >
           Save
         </Button>
