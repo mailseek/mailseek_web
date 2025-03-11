@@ -134,20 +134,6 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
           </div>
         </div>
 
-        {/* From line */}
-        <div className="hidden md:block flex items-center text-xs text-muted-foreground overflow-hidden w-full">
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <p className="truncate w-full">From: {message.from}</p>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>{message.from}</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-        </div>
-
         {/* Summary */}
         <div className="flex items-center text-xs text-muted-foreground overflow-hidden w-full">
           <p className="line-clamp-2 overflow-hidden text-ellipsis w-full">
