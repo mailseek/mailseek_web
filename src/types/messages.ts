@@ -20,6 +20,7 @@ export type Category = {
   id: string
   name: string
   definition: string
+  message_count: number
 }
 
 export type MessageContent = {

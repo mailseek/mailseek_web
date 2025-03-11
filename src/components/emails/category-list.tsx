@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Category } from "@/types/messages";
+import { Badge } from "../ui/badge";
 interface CategoryListProps {
   categories: Category[];
   selectedCategory: string | null;
@@ -31,11 +32,17 @@ export function CategoryList({
           >
             {/* <category.icon className="h-4 w-4" /> */}
             <span className="flex-1 text-left">{category.name}</span>
-            {/* {category.count > 0 && (
-              <Badge variant="secondary" className="ml-auto">
-                {category.count}
+            {category.message_count > 0 && (
+              <Badge
+                variant="secondary"
+                className={cn(
+                  "ml-auto",
+                  selectedCategory && selectedCategory === category.id && "bg-background/50"
+                )}
+              >
+                {category.message_count}
               </Badge>
-            )} */}
+            )}
           </Button>
         ))}
         <Button
