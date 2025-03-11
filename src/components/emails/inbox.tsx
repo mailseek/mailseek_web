@@ -9,10 +9,11 @@ import {
 import { Message, Category } from "../../types/messages";
 import { EmailItem } from "./email-item";
 import { Separator } from "@/components/ui/separator";
-import { BellOff, Loader2, RefreshCcw, Trash } from "lucide-react";
+import { BellOff, Loader2, RefreshCcw, Settings, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { Checkbox } from "../ui/checkbox";
 import { cn } from "../../lib/utils";
+import CategorySettingsModal from "./category-settings-modal";
 
 type Props = {
   userId: string;
@@ -34,7 +35,7 @@ export default function Inbox({
   );
   const [loading, setLoading] = useState(false);
   const [selectedMessages, setSelectedMessages] = useState<string[]>([]);
-
+  const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const handleUnsubscribeFromEmails = async () => {
     if (selectedMessages.length === 0) {
       return;
@@ -83,7 +84,7 @@ export default function Inbox({
       setLoading(true);
       const data = await getMessages(userId, categoryId);
       if (!data || !data.messages) {
-        return
+        return;
       }
       setMessages(data.messages);
     } catch (error) {
@@ -123,11 +124,30 @@ export default function Inbox({
               "Browse and manage your emails by category"}
           </p>
         </div>
-        <Button variant="outline" size="icon" onClick={() => fetchMessages(selectedCategoryId)} disabled={loading}>
-          <RefreshCcw className={cn("w-4 h-4", {
-            "animate-spin": loading
-          })} />
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => fetchMessages(selectedCategoryId)}
+            disabled={loading}
+          >
+            <RefreshCcw
+              className={cn("w-4 h-4", {
+                "animate-spin": loading,
+              })}
+            />
+          </Button>
+          {category && category.name !== "Uncategorized" ? (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setIsSettingsModalOpen(true)}
+              disabled={loading}
+            >
+              <Settings className="w-4 h-4" />
+            </Button>
+          ) : null}
+        </div>
       </div>
       <Separator className="my-3" />
       <div className="flex items-center justify-between">
@@ -144,7 +164,10 @@ export default function Inbox({
           >
             <Checkbox
               id={`select-all-emails`}
-              checked={selectedMessages.length === messages.length && messages.length > 0}
+              checked={
+                selectedMessages.length === messages.length &&
+                messages.length > 0
+              }
               className="border-muted-foreground/50 cursor-pointer"
             />
           </div>
@@ -199,6 +222,12 @@ export default function Inbox({
           </div>
         </Suspense>
       </div>
+      <CategorySettingsModal
+        isOpen={isSettingsModalOpen}
+        onClose={() => setIsSettingsModalOpen(false)}
+        category={category}
+        userId={userId}
+      />
     </div>
   );
 }

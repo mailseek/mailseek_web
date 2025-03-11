@@ -23,6 +23,19 @@ export type Category = {
   message_count: number
 }
 
+export type CategorySettingsItem = {
+  id: string
+  key: string
+  value: {
+    type: 'boolean'
+    value: boolean
+  }
+}
+
+export type CategorySettings = {
+  items: CategorySettingsItem[]
+}
+
 export type MessageContent = {
   id: string
   html: string
