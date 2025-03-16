@@ -1,15 +1,15 @@
-# fly.toml app configuration file generated for mailseek-web on 2025-03-08T22:26:18+01:00
+# fly.toml app configuration file generated for inbox-zero-web on 2025-03-16T19:38:30+01:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'mailseek-web'
-primary_region = 'fra'
+app = 'inbox-zero-web'
+primary_region = 'ams'
 
 [build]
   [build.args]
-    NEXT_PUBLIC_BACKEND_URL="https://mailseek.fly.dev"
-    NEXT_PUBLIC_URL="https://mailseek-web.fly.dev"
+    NEXT_PUBLIC_BACKEND_URL="https://inbox-zero.fly.dev"
+    NEXT_PUBLIC_URL="https://inbox-zero-web.fly.dev"
     NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd2bm5ham5kZ2x5ZHlpd2NrZHRuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNTU1MDMsImV4cCI6MjA1NjkzMTUwM30.OSFOiXKhV9S7KnZ7DQuk22acSaiPizoe4qHBflfVfvA"
     NEXT_PUBLIC_SUPABASE_URL="https://gvnnajndglydyiwckdtn.supabase.co"
 
