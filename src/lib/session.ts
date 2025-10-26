@@ -19,6 +19,16 @@ export async function encrypt(payload: SessionPayload) {
     .sign(encodedKey)
 }
 
+export async function generateBackendToken(payload: SessionPayload) {
+  const secretKey = process.env.BACKEND_JWT_SECRET
+  const backendSecretKey = new TextEncoder().encode(secretKey)
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('6d')
+    .sign(backendSecretKey)
+}
+
 export async function decrypt(session: string | undefined = '') {
   try {
     const { payload } = await jwtVerify(session, encodedKey, {

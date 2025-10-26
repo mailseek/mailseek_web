@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 // The client you created from the Server-Side Auth instructions
 import { createServerClient } from '@/supabase/server'
+import { generateBackendToken } from '../../../lib/session'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -13,11 +14,14 @@ export async function GET(request: Request) {
     const google_token = data.session?.provider_token
     const refresh_token = data.session?.provider_refresh_token
     const expires_at = data.session?.expires_at
+    const backendToken = await generateBackendToken({
+      user_id: data.user!.id!,
+    })
     const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/google`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${data.session!.access_token}`,
+        'Authorization': `Bearer ${backendToken}`,
       },
       body: JSON.stringify({
         email: data.user!.email,

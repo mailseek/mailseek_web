@@ -1,6 +1,6 @@
 'use server'
 import { createServerClient } from '@/supabase/server'
-import { encrypt } from '../lib/session';
+import { generateBackendToken } from '../lib/session';
 
 export async function getAuthToken() {
   const supabase = await createServerClient();
@@ -11,7 +11,7 @@ export async function getAuthToken() {
       data: null,
     };
   }
-  const jwt = await encrypt({
+  const jwt = await generateBackendToken({
     user_id: data.user.id!,
   });
 
