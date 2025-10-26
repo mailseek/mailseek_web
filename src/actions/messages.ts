@@ -53,6 +53,31 @@ export async function unsubscribeFromEmails(message_ids: string[], user_id: stri
   return data
 }
 
+export async function analyzeMessage(message_id: string) {
+  const {
+    data: token,
+    error,
+  } = await getAuthToken()
+
+  if (error) {
+    throw new Error('Failed to get auth token')
+  }
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/messages/analyze_documents`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message_id, user_id: "123" }),
+  })
+
+  if (resp.status !== 200) {
+    throw new Error('Failed to analyze message')
+  }
+  const data: {message: string} = await resp.json()
+  return data
+}
+
 export async function getReports(user_id: string) {
   const {
     data: token,

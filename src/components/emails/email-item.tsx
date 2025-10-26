@@ -12,7 +12,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Message, MessageContent } from "../../types/messages";
 import { Button } from "../ui/button";
-import { loadMessage } from "../../actions/messages";
+import { analyzeMessage, loadMessage } from "../../actions/messages";
 import ShowEmailModal from "./show-email-modal";
 import { Checkbox } from "../ui/checkbox";
 interface EmailItemProps {
@@ -32,6 +32,18 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
       setIsOpen(true);
       const resp = await loadMessage(message.message_id, message.user_id);
       setContent(resp.content);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const onAnalyze = async () => {
+    try {
+      setLoading(true);
+      const resp = await analyzeMessage(message.message_id);
+      console.log(resp);
     } catch (error) {
       console.error(error);
     } finally {
@@ -105,6 +117,18 @@ export function EmailItem({ message, selected, onSelect }: EmailItemProps) {
               }}
             >
               View Email
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="hidden md:block shrink-0 whitespace-nowrap"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onAnalyze();
+              }}
+            >
+              Analyze
             </Button>
             <button
               className="hidden md:flex items-center bg-transparent border-none cursor-pointer"
