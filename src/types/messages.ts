@@ -1,4 +1,20 @@
 
+export type AnalyzeResult = {
+  message_id: string
+  model: string
+  temperature: number
+  result: {
+    summary: string
+    status: 'no_errors' | 'minor_errors' | 'critical_errors'
+    errors: {
+      document_type: string
+      error: string
+      field: string
+      severity: 'minor' | 'major' | 'critical'
+    }[]
+  }
+}
+
 export type Message = {
   id: string
   message_id: string
@@ -14,6 +30,7 @@ export type Message = {
   need_action: boolean
   category_id: string | null
   sent_at: string | null
+  analyze_result: AnalyzeResult | null
 }
 
 export type Category = {

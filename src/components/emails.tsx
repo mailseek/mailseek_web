@@ -182,7 +182,7 @@ export default function Emails({
               <ConnectedAccountsList connectedAccounts={connectedAccounts} />
               <Separator className="my-2" />
 
-              <Button
+              {/* <Button
                 variant="outline"
                 className="w-full justify-start gap-2"
                 asChild
@@ -190,6 +190,17 @@ export default function Emails({
                 <Link href="/reports" className="w-full justify-start gap-2">
                   <BarChart3 className="h-4 w-4" />
                   Reports & screenshots
+                </Link>
+              </Button> */}
+
+              <Button
+                variant="outline"
+                className="w-full justify-start gap-2"
+                asChild
+              >
+                <Link href="/analyze" className="w-full justify-start gap-2">
+                  <BarChart3 className="h-4 w-4" />
+                  Analyzed documents
                 </Link>
               </Button>
             </div>

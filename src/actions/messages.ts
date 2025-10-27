@@ -150,3 +150,29 @@ export async function getMessages(userId: string, selectedCategoryId: string) {
 
   return data
 }
+
+export async function getMessagesWithAnalyzeResults() {
+  const {
+    data: token,
+    error,
+  } = await getAuthToken()
+  if (error) {
+    throw new Error('Failed to get auth token')
+  }
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/messages/analyzed`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (resp.status !== 200) {
+    throw new Error('Failed to get analyzed messages')
+  }
+
+  const data: {
+    messages: Message[]
+  } = await resp.json()
+
+  return data
+}
