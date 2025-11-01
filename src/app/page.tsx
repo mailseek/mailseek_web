@@ -5,6 +5,8 @@ import { createServerClient } from '@/supabase/server'
 export default async function Home() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
+  const redirectTo = `${process.env.NEXT_PUBLIC_URL}/auth/callback?next=/mail`
+  console.log('Redirect to', redirectTo)
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
@@ -38,7 +40,7 @@ export default async function Home() {
             <Mail className="w-4 h-4" />
             Start now
           </a> */}
-          <GoogleAuth redirectTo={`${process.env.NEXT_PUBLIC_URL}/auth/callback?next=/mail`} />
+          <GoogleAuth redirectTo={redirectTo} />
         </div>
       </main>
     </div>
