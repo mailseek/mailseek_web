@@ -8,7 +8,6 @@ import { checkAuth } from '../../actions/auth';
 
 export default async function Page() {
   const authCheck = await checkAuth();
-  console.log('authCheck', authCheck)
   if (!authCheck.success) {
     redirect('/login');
   }
