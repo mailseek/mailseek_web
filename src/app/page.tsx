@@ -5,7 +5,7 @@ import { createServerClient } from '@/supabase/server'
 export default async function Home() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const publicUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NEXT_PUBLIC_URL
+  const publicUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : process.env.NEXT_PUBLIC_URL
   const redirectTo = `${publicUrl}/auth/callback?next=/mail`
   console.log('Redirect to', redirectTo)
   return (
