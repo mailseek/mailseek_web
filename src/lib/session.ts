@@ -64,7 +64,7 @@ export async function updateSession(request: NextRequest) {
     request,
   })
 
-  const supabase = await createServerClient()
+  // const supabase = await createServerClient()
 
   // Do not run code between createServerClient and
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
@@ -72,12 +72,18 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: DO NOT REMOVE auth.getUser()
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const auth = request.cookies.get('auth')
+  if (auth) {
+    const session = JSON.parse(auth.value)
+    console.log('session at update session', session)
+  }
+
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser()
 
   if (
-    !user &&
+    // !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/auth') &&
     !request.nextUrl.pathname.startsWith('/admin')

@@ -4,7 +4,7 @@ import { Category } from "../types/messages"
 import { MailseekUser } from "../types/users"
 import { getAuthToken } from "./socket"
 
-export async function getConnectedAccounts(userId: string) {
+export async function getConnectedAccounts() {
   const {
     data: token,
     error,
@@ -14,7 +14,7 @@ export async function getConnectedAccounts(userId: string) {
     throw new Error('Failed to get auth token')
   }
 
-  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/connected_accounts?user_id=${userId}`, {
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/connected_accounts`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ export async function addCategory(userId: string, category: Pick<Category, "name
   return data
 }
 
-export async function getCategories(userId: string) {
+export async function getCategories() {
   const {
     data: token,
     error,
@@ -71,7 +71,7 @@ export async function getCategories(userId: string) {
   if (error) {
     throw new Error('Failed to get auth token')
   }
-  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/categories?user_id=${userId}`, {
+  const resp = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/users/categories`, {
     headers: {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',

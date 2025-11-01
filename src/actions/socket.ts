@@ -1,22 +1,24 @@
 'use server'
-import { createServerClient } from '@/supabase/server'
-import { generateBackendToken } from '../lib/session';
+import { cookies } from 'next/headers';
 
 export async function getAuthToken() {
-  const supabase = await createServerClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
+  const auth = await cookies()
+  const authCookie = auth.get('auth')
+  if (!authCookie) {
     return {
-      error,
+      error: 'No auth cookie',
       data: null,
     };
   }
-  const jwt = await generateBackendToken({
-    user_id: data.user.id!,
-  });
+  const session: {
+    user_id: string,
+    token: string,
+    email: string,
+  } = JSON.parse(authCookie.value)
 
   return {
-    data: jwt,
+    data: session.token,
+    session: session,
     error: null,
   };
 }
