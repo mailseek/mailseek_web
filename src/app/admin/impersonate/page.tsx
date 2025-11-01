@@ -56,25 +56,13 @@ export default function AdminImpersonatePage() {
         return
       }
 
-      // Step 2: Get impersonate email from Next.js API
-      const emailResponse = await fetch('/api/admin/impersonate-email')
-      if (!emailResponse.ok) {
-        setError('Failed to get impersonate email')
-        setLoading(false)
-        return
-      }
-      const { email } = await emailResponse.json()
-
       // Step 3: Call backend impersonate endpoint with the email
-      const impersonateResponse = await fetch(`${backendUrl}/api/admin/impersonate`, {
+      const impersonateResponse = await fetch('/api/admin/impersonate', {
         method: 'POST',
         headers: {
           'Authorization': authHeader,
           'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-        }),
+        }
       })
 
       if (!impersonateResponse.ok) {

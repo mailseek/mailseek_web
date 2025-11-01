@@ -1,14 +1,13 @@
-import { createServerClient } from "@/supabase/server";
 import { redirect } from "next/navigation";
 import AnalyzeResults from "../../components/analyze-results/analyze-results";
 import Link from "next/link";
 import { Separator } from "../../components/ui/separator";
 import { getMessagesWithAnalyzeResults } from "../../actions/messages";
+import { checkAuth } from "../../actions/auth";
 
 export default async function AnalyzePage() {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
+  const authCheck = await checkAuth();
+  if (!authCheck.success) {
     redirect('/login');
   }
 
