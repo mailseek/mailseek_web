@@ -6,6 +6,7 @@ import { getAuthToken } from './socket'
 export async function checkAuth() {
   const {
     data: token,
+    session,
     error,
   } = await getAuthToken()
 
@@ -34,12 +35,14 @@ export async function checkAuth() {
 
     return {
       success: true,
+      session: session,
       error: null,
     }
   } catch (error) {
     return {
       success: false,
       error: 'Failed to check auth',
+      session: null,
     }
   }
 }

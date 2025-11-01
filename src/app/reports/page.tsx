@@ -3,10 +3,11 @@ import { redirect } from "next/navigation";
 import Reports from "../../components/reports/reports";
 import Link from "next/link";
 import { Separator } from "../../components/ui/separator";
+import { checkAuth } from "../../actions/auth";
+
 export default async function ReportsPage() {
-  const supabase = await createServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
+  const authCheck = await checkAuth();
+  if (!authCheck.success) {
     redirect('/login');
   }
 
@@ -17,7 +18,7 @@ export default async function ReportsPage() {
         <Separator className="my-1" />
         <p>All screenshots and other reports are listed below</p>
       </div>
-      <Reports user_id={user.id} />
+      <Reports user_id={authCheck.session!.user_id} />
     </div>
   )
 }
