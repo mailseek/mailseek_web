@@ -5,7 +5,8 @@ import { createServerClient } from '@/supabase/server'
 export default async function Home() {
   const supabase = await createServerClient()
   const { data: { user } } = await supabase.auth.getUser()
-  const redirectTo = `${process.env.NEXT_PUBLIC_URL}/auth/callback?next=/mail`
+  const publicUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : process.env.NEXT_PUBLIC_URL
+  const redirectTo = `${publicUrl}/auth/callback?next=/mail`
   console.log('Redirect to', redirectTo)
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
